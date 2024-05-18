@@ -1,8 +1,9 @@
-import { StyleSheet, Image} from 'react-native';
+import { StyleSheet, Image, Pressable} from 'react-native';
 import { ThemedText } from '@components/ThemedText';
 import { ThemedView } from '@components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { Product } from '@/types';
+import { Link } from 'expo-router';
 
 export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
@@ -12,7 +13,8 @@ type ProductListItemProps = {
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
-    <ThemedView style={styles.container}>
+  <Link href={`/menu/${product.id}`} asChild>
+    <Pressable style={styles.container}>
       <Image 
         source={{uri: product.image || defaultPizzaImage}} 
         style={styles.image}
@@ -20,7 +22,9 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
         />
       <ThemedText style={styles.title}>{product.name}</ThemedText>
       <ThemedText style={styles.price}>${product.price}</ThemedText>
-    </ThemedView>
+      
+    </Pressable>
+  </Link>
     );
 };
 
@@ -32,6 +36,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flex: 1,
     maxWidth: "50%",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 18,

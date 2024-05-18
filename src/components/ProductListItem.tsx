@@ -24,8 +24,9 @@ export default ProductListItem;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 30,
+    padding: 10,
     borderRadius: 10,
+    flex: 1,
   },
   title: {
     fontSize: 18,

@@ -1,13 +1,19 @@
 import { StyleSheet, Image} from 'react-native';
-import { ThemedText } from '@/src/components/ThemedText';
-import { ThemedView } from '@/src/components/ThemedView';
-import { Colors } from '@/src/constants/Colors';
+import { ThemedText } from '@components/ThemedText';
+import { ThemedView } from '@components/ThemedView';
+import { Colors } from '@/constants/Colors';
+import { Product } from '@/types';
 
+export const defaultPizzaImage = 'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png'
 
-const ProductListItem = ({product}) => {
+type ProductListItemProps = {
+    product: Product;
+}
+
+const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
     <ThemedView style={styles.container}>
-      <Image source={{uri: product.image}} style={styles.image}/>
+      <Image source={{uri: product.image || defaultPizzaImage}} style={styles.image}/>
       <ThemedText style={styles.title}>{product.name}</ThemedText>
       <ThemedText style={styles.price}>${product.price}</ThemedText>
     </ThemedView>

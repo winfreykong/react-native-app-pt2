@@ -13,7 +13,11 @@ type ProductListItemProps = {
 const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
     <ThemedView style={styles.container}>
-      <Image source={{uri: product.image || defaultPizzaImage}} style={styles.image}/>
+      <Image 
+        source={{uri: product.image || defaultPizzaImage}} 
+        style={styles.image}
+        resizeMode='contain'
+        />
       <ThemedText style={styles.title}>{product.name}</ThemedText>
       <ThemedText style={styles.price}>${product.price}</ThemedText>
     </ThemedView>
@@ -27,6 +31,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     flex: 1,
+    maxWidth: "50%",
   },
   title: {
     fontSize: 18,

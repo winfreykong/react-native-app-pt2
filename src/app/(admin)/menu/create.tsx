@@ -17,13 +17,35 @@ const CreateProductScreen = (props) => {
   // want to bind these to TextInput using value and onChangeText
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [errors, setErrors] = useState("");
 
   const resetFields = () => {
     setName("");
     setPrice("");
   };
 
+  const validateInput = () => {
+    setErrors("");
+
+    if (!name) {
+      setErrors("Name is required");
+      return false;
+    }
+    if (!price) {
+      setErrors("Price is required");
+      return false;
+    }
+    if (isNaN(parseFloat(price))) {
+      setErrors("Price is not a number");
+      return false;
+    }
+    return true;
+  };
+
   const onCreate = () => {
+    if (!validateInput()) {
+      return;
+    }
     console.warn("Creating product: ", name);
 
     // save in database
@@ -54,6 +76,8 @@ const CreateProductScreen = (props) => {
         style={[styles.input]}
         keyboardType="numeric"
       />
+
+      <ThemedText style={{ color: "red" }}>{errors}</ThemedText>
 
       <Button onPress={onCreate} text="Create" />
     </ThemedView>

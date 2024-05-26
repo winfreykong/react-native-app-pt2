@@ -1,10 +1,13 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import React, { useState } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import Button from "@/components/Button";
+import { defaultPizzaImage } from "@/components/ProductListItem";
+import * as ImagePicker from "expo-image-picker";
+import { Stack } from "expo-router";
 
 const CreateProductScreen = (props) => {
   // hooks should be at the top of component
@@ -18,6 +21,7 @@ const CreateProductScreen = (props) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
+  const [image, setImage] = useState<string | null>(null);
 
   const resetFields = () => {
     setName("");
@@ -53,8 +57,30 @@ const CreateProductScreen = (props) => {
     resetFields();
   };
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
+      <Stack.Screen options={{ title: "Create Product" }} />
+      <Image
+        source={{ uri: image || defaultPizzaImage }}
+        style={styles.image}
+      />
+      <ThemedText onPress={pickImage} style={styles.textButton}>
+        Select Image
+      </ThemedText>
       <ThemedText type="defaultSemiBold" style={[styles.label, { color }]}>
         Name
       </ThemedText>
@@ -90,6 +116,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
   },
+  image: {
+    width: "50%",
+    aspectRatio: 1,
+    alignSelf: "center",
+  },
   input: {
     backgroundColor: "white",
     padding: 10,
@@ -104,6 +135,12 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 16,
     marginLeft: 10,
+  },
+  textButton: {
+    alignSelf: "center",
+    fontWeight: "bold",
+    color: Colors.light.tint,
+    marginVertical: 10,
   },
 });
 export default CreateProductScreen;

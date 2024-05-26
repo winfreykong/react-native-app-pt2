@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import React, { useState } from "react";
 import { ThemedText } from "@/components/ThemedText";
@@ -7,7 +7,7 @@ import { Colors } from "@/constants/Colors";
 import Button from "@/components/Button";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 
 const CreateProductScreen = (props) => {
   // hooks should be at the top of component
@@ -22,6 +22,9 @@ const CreateProductScreen = (props) => {
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState<string | null>(null);
+
+  const { id } = useLocalSearchParams(); // get id from [id] when editting item
+  const isUpdating = !!id;
 
   const resetFields = () => {
     setName("");
@@ -57,6 +60,43 @@ const CreateProductScreen = (props) => {
     resetFields();
   };
 
+  const onUpdateCreate = () => {
+    if (!validateInput()) {
+      return;
+    }
+    console.warn("Updating product: ", name);
+
+    // save in database
+
+    resetFields();
+  };
+
+  const onSubmit = () => {
+    if (isUpdating) {
+      // call update function
+      onUpdateCreate();
+    } else {
+      onCreate();
+    }
+  };
+
+  const onDelete = () => {
+    console.warn("DELETE!!!!!!!!!!!!!!!!");
+  };
+
+  const confirmDelete = () => {
+    Alert.alert("Confirm", "Are you sure you want to delete this product", [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: onDelete,
+      },
+    ]);
+  };
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -73,7 +113,9 @@ const CreateProductScreen = (props) => {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: "Create Product" }} />
+      <Stack.Screen
+        options={{ title: isUpdating ? "Edit Product" : "Create Product" }}
+      />
       <Image
         source={{ uri: image || defaultPizzaImage }}
         style={styles.image}
@@ -105,7 +147,12 @@ const CreateProductScreen = (props) => {
 
       <ThemedText style={{ color: "red" }}>{errors}</ThemedText>
 
-      <Button onPress={onCreate} text="Create" />
+      <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+      {isUpdating && (
+        <ThemedText onPress={confirmDelete} style={styles.textButton}>
+          Delete
+        </ThemedText>
+      )}
     </ThemedView>
   );
 };

@@ -9,7 +9,7 @@ import { defaultPizzaImage } from "@/components/ProductListItem";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams } from "expo-router";
 
-const CreateProductScreen = (props) => {
+const CreateProductScreen = () => {
   // hooks should be at the top of component
   const color = useThemeColor(
     { light: Colors.light.text, dark: Colors.dark.text },

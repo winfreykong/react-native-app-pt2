@@ -1,0 +1,15 @@
+import { FlatList, View } from "react-native";
+import ProductListItem from "@components/ProductListItem";
+import products from "@assets/data/products";
+import orders from "@assets/data/orders";
+import OrderListItem from "@/components/OrderListItem";
+
+export default function OrdersScreen() {
+  return (
+    <FlatList
+      data={orders}
+      renderItem={({ item }) => <OrderListItem order={item} />}
+      contentContainerStyle={{ gap: 10, padding: 10 }}
+    />
+  );
+}

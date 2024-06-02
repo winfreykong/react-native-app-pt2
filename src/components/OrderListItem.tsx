@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import { Order } from "@/types";
 import { useThemeColor } from "@hooks/useThemeColor";
@@ -6,6 +6,7 @@ import { Colors } from "@/constants/Colors";
 import { ThemedText } from "./ThemedText";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Link, useSegments } from "expo-router";
 
 dayjs.extend(relativeTime);
 
@@ -14,29 +15,28 @@ type OrderListItemProps = {
 };
 
 const OrderListItem = ({ order }: OrderListItemProps) => {
-  // hooks should be at the top of component
   const backgroundColor = useThemeColor(
     { light: Colors.light.background, dark: Colors.dark.background },
     "background"
   );
 
-  const now = dayjs();
-
-  // Format the time difference as a human-readable string
+  const segments = useSegments();
   const timeAgo = dayjs(order.created_at).fromNow();
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <View style={styles.row}>
-        <View style={styles.info}>
-          <ThemedText type="defaultSemiBold">Order #{order.id}</ThemedText>
-          <ThemedText>{timeAgo}</ThemedText>
+    <Link href={`/${segments[0]}/orders/${order.id}`} asChild>
+      <Pressable>
+        <View style={[styles.container, { backgroundColor }]}>
+          <View style={styles.info}>
+            <ThemedText type="defaultSemiBold">Order #{order.id}</ThemedText>
+            <ThemedText>{timeAgo}</ThemedText>
+          </View>
+          <ThemedText style={styles.status} type="defaultSemiBold">
+            {order.status}
+          </ThemedText>
         </View>
-        <ThemedText style={styles.status} type="defaultSemiBold">
-          {order.status}
-        </ThemedText>
-      </View>
-    </View>
+      </Pressable>
+    </Link>
   );
 };
 
@@ -45,19 +45,18 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 15,
     borderRadius: 10,
-    flex: 1,
-  },
-  row: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between", // Ensure items are spaced apart
+    justifyContent: "space-between",
   },
   info: {
-    flex: 3,
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
   },
   status: {
     textAlign: "right",
-    flex: 1,
+    alignSelf: "center",
   },
 });
 

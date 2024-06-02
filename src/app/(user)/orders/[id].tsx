@@ -22,11 +22,11 @@ const OrderDetailsScreen = () => {
     <View style={styles.container}>
       <Stack.Screen options={{ title: `Order #${order.id}` }} />
 
-      <OrderListItem order={order} />
       <FlatList
         data={order_items}
         renderItem={({ item }) => <OrderItemListItem orderItem={item} />}
         contentContainerStyle={{ gap: 10, paddingVertical: 10 }}
+        ListHeaderComponent={() => <OrderListItem order={order} />} // so it gets scrolled altogether
       />
     </View>
   );

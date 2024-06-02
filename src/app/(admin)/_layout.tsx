@@ -35,9 +35,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="orders"
         options={{
-          title: "Explore",
+          title: "Orders",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name="list" color={color} />
           ),

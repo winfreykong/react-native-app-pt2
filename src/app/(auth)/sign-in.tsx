@@ -1,6 +1,5 @@
 import {
-  View,
-  Text,
+  Alert,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
@@ -13,6 +12,7 @@ import { useThemeColor } from "@hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import Button from "@/components/Button";
 import { useRouter } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
 const SignIn = () => {
   // hooks should be at the top of component
@@ -23,7 +23,7 @@ const SignIn = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -31,33 +31,16 @@ const SignIn = () => {
     router.push("/sign-up");
   };
 
-  const validateInput = () => {
-    setErrors("");
+  async function signInWtihEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (!email) {
-      setErrors("Email is required");
-      return false;
-    }
-    if (!password) {
-      setErrors("Password is required");
-      return false;
-    }
-
-    return true;
-  };
-
-  const resetFields = () => {
-    setPassword("");
-    setEmail("");
-  };
-
-  const signIn = () => {
-    if (!validateInput()) {
-      return;
-    }
-    // do something
-    resetFields();
-  };
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -84,10 +67,12 @@ const SignIn = () => {
           style={styles.input}
           secureTextEntry={true}
         />
-        <ThemedText style={{ color: "red", marginLeft: 10 }}>
-          {errors}
-        </ThemedText>
-        <Button onPress={signIn} text="Sign in" />
+
+        <Button
+          onPress={signInWtihEmail}
+          disabled={loading}
+          text={loading ? "Signing in..." : "Sign in"}
+        />
         <ThemedText onPress={signUp} style={styles.textButton}>
           Create an account
         </ThemedText>
@@ -103,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: "#ededed",
     padding: 10,
     borderRadius: 5,
     marginTop: 5,

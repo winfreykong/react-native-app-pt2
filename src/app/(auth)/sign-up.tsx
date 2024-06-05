@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
@@ -13,6 +14,7 @@ import { useThemeColor } from "@hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import Button from "@/components/Button";
 import { useRouter } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
 const SignUp = () => {
   // hooks should be at the top of component
@@ -23,44 +25,23 @@ const SignUp = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const signIn = () => {
     router.push("/sign-in");
   };
 
-  const signUp = () => {
-    router.push("/sign-up");
-  };
+  async function signUpWtihEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-  const validateInput = () => {
-    setErrors("");
-
-    if (!email) {
-      setErrors("Email is required");
-      return false;
-    }
-    if (!password) {
-      setErrors("Password is required");
-      return false;
-    }
-
-    return true;
-  };
-
-  const resetFields = () => {
-    setPassword("");
-    setEmail("");
-  };
-
-  const createAccount = () => {
-    if (!validateInput()) {
-      return;
-    }
-    // do something
-    resetFields();
-  };
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -82,15 +63,16 @@ const SignUp = () => {
         <TextInput
           value={password}
           onChangeText={setPassword}
-          placeholder="***"
+          placeholder="*******"
           placeholderTextColor={"gray"}
           style={styles.input}
           secureTextEntry={true}
         />
-        <ThemedText style={{ color: "red", marginLeft: 10 }}>
-          {errors}
-        </ThemedText>
-        <Button onPress={createAccount} text="Create account" />
+        <Button
+          onPress={signUpWtihEmail}
+          disabled={loading}
+          text={loading ? "Creating account..." : "Create account"}
+        />
         <ThemedText onPress={signIn} style={styles.textButton}>
           Sign in
         </ThemedText>
@@ -106,7 +88,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: "#ededed",
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
